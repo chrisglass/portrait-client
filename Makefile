@@ -1,0 +1,2 @@
+check:
+	nosetests landscape
