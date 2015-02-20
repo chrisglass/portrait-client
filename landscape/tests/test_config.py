@@ -2,7 +2,7 @@ import tempfile
 import textwrap
 import unittest
 
-from landscape.main import load_config_file
+from landscape.config import load_config_file
 
 
 class Maintest(unittest.TestCase):
