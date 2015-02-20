@@ -7,10 +7,12 @@ class Pinger(object):
     and that pings the landscape server with a simple HTTP post.
     """
 
-    def __init__(self, config, scheduler, storage):
-        self.ping_interval = config.ping_interval
+    def __init__(self, config, scheduler, storage, post=requests.post):
+        self.ping_interval = config.get("ping_interval")
+        self.ping_url = config.get("ping_url")
         self.scheduler = scheduler
-        self.storage = storage
+        self.insecure_id = storage.get("insecure_id")
+        self.post = post
 
     def run(self):
         """
@@ -20,8 +22,10 @@ class Pinger(object):
         """
         # Make the HTP request to the ping URL.
         # It's a POST with the "insecure ID" as single post data item.
-        insecure_id = self.storage.get("insecure_id")
-        url = self.config["ping_url"]
-        requests.post(url, data={"insecure_id": insecure_id})
+        insecure_id = self.insecure_id
+        url = self.ping_url
+
+        # Actually perform the POST.
+        self.post(url, data={"insecure_id": insecure_id})
 
         self.scheduler.enter(self.ping_interval, 1, self.run, ())
