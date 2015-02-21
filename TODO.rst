@@ -1,0 +1,11 @@
+SO you'd like to help, huh?
+===========================
+
+There's a lot of stuff to be done yet, since this project is in the "will it
+even work" phase. The following is an small indication of stuff that needs to
+be done. Feel free to add items here, too:
+
+- Finish porting landscape/message_schemas.py and landscape/lib/bpickle.py to
+  python3. (lots of unicode vs. strings). Some tests are currently marked @skip
+  and that should disappear.
+- Add some tests to most test files. Right now only the happy path is tested.
