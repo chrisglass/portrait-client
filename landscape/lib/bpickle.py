@@ -40,11 +40,12 @@ def dumps(obj, _dt=dumps_table):
         raise ValueError("Unsupported type: %s" % e)
 
 
-def loads(str, _lt=loads_table):
-    if not str:
+def loads(byte_string, _lt=loads_table):
+    if not byte_string:
         raise ValueError("Can't load empty string")
+    unicode_string = byte_string.decode()
     try:
-        return _lt[str[0]](str, 0)[0]
+        return _lt[unicode_string[0]](unicode_string, 0)[0]
     except KeyError as e:
         raise ValueError("Unknown type character: %s" % e)
     except IndexError:
@@ -63,6 +64,7 @@ def dumps_str(obj):
     return "s%s:%s" % (len(obj), obj)
 
 def dumps_unicode(obj):
+    import ipdb; ipdb.set_trace()
     obj = obj.encode("utf-8")
     return "u%s:%s" % (len(obj), obj)
 
