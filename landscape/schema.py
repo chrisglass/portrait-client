@@ -83,12 +83,7 @@ class Unicode(object):
         self.encoding = encoding
 
     def coerce(self, value):
-        if isinstance(value, str):
-            try:
-                value = value.decode(self.encoding)
-            except UnicodeDecodeError as e:
-                raise InvalidError("%r can't be decoded: %s" % (value, str(e)))
-        if not isinstance(value, unicode):
+        if not isinstance(value, str):
             raise InvalidError("%r isn't a unicode" % (value,))
         return value
 
