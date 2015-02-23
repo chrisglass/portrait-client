@@ -57,14 +57,12 @@ class BPickleTest(unittest.TestCase):
         repsonse = b'ds8:messagesb1;'  # As returned by the "requests" lib
         result = bpickle.loads(repsonse)
         expected = {"messages": True}
-
         self.assertEqual(expected, result)
 
     def test_ping_result_message_encode(self):
         """
         Let's ensure the encoding/decoding is symmetric "by hand".
         """
-        import ipdb; ipdb.set_trace()
         payload = {"messages": True}
         expected = b'ds8:messagesb1;'
         result = bpickle.dumps(payload)

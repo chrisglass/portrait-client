@@ -35,7 +35,7 @@ loads_table = {}
 
 def dumps(obj, _dt=dumps_table):
     try:
-        return _dt[type(obj)](obj)
+        return _dt[type(obj)](obj).encode("UTF-8")
     except KeyError as e:
         raise ValueError("Unsupported type: %s" % e)
 
@@ -64,7 +64,7 @@ def dumps_str(obj):
     return "s%s:%s" % (len(obj), obj)
 
 def dumps_unicode(obj):
-    import ipdb; ipdb.set_trace()
+    #TODO: This is unwired for now! Remove!
     obj = obj.encode("utf-8")
     return "u%s:%s" % (len(obj), obj)
 
