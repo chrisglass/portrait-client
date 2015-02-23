@@ -29,5 +29,4 @@ class Pinger(Scheduleable):
         url = self.ping_url
 
         # Actually perform the POST.
-        import ipdb; ipdb.set_trace()
         result = self.post(url, data={"insecure_id": insecure_id})
