@@ -18,6 +18,6 @@ class PingTest(unittest.TestCase):
         def fauxpost(*args, **kwargs):
             calls.append((args, kwargs))
         post = fauxpost
-        pinger = ping.Pinger(config, scheduler, storage, post=post)
+        pinger = ping.Pinger(config, storage, post=post)
 
         pinger.run()

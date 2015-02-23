@@ -1,16 +1,19 @@
 import requests
 
+from landscape.scheduler import Scheduleable
 
-class Pinger(object):
+
+class Pinger(Scheduleable):
     """
-    A simple class whose run() command is scheduled to run every run_interval,
-    and that pings the landscape server with a simple HTTP post.
+    A "Scheduleable" Pinger that simply sends an http request to the configured
+    ping server every "ping_interval" (as defined in the configuration).
     """
 
-    def __init__(self, config, scheduler, storage, post=requests.post):
-        self.ping_interval = config.get("ping_interval")
+    thread_name = "landscape-client-pinger"
+
+    def __init__(self, config, storage, post=requests.post):
+        self.scheduling_delay = config.get("ping_interval")
         self.ping_url = config.get("ping_url")
-        self.scheduler = scheduler
         self.insecure_id = storage.get("insecure_id")
         self.post = post
 
@@ -26,6 +29,5 @@ class Pinger(object):
         url = self.ping_url
 
         # Actually perform the POST.
-        self.post(url, data={"insecure_id": insecure_id})
-
-        self.scheduler.enter(self.ping_interval, 1, self.run, ())
+        import ipdb; ipdb.set_trace()
+        result = self.post(url, data={"insecure_id": insecure_id})
