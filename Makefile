@@ -1,5 +1,5 @@
 check:
-	nosetests landscape
+	nosetests3 landscape
 
 clean:
 	@find -name "*.pyc" -delete

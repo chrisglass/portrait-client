@@ -17,7 +17,7 @@ class Scheduleable(object):
     thread_name = "landscape-client-module"
 
     def run(self):
-        pass
+        pass  # Should be implemented by subclasses
 
 
 def run_in_thread(module):
@@ -31,5 +31,15 @@ def run_and_reschedule(scheduler, module):
     Run a Schedulable in a thread, and reschedule it immediately.
     """
     run_in_thread(module)
+    scheduler.enter(module.scheduling_delay, DEFAULT_PRIORITY,
+                    action=run_and_reschedule, argument=(scheduler, module))
+
+
+def initial_schedule(scheduler, module):
+    """
+    Schedule a module to be run after an initial delay.
+
+    This is used as the first "bootstrap" run on service start.
+    """
     scheduler.enter(module.scheduling_delay, DEFAULT_PRIORITY,
                     action=run_and_reschedule, argument=(scheduler, module))

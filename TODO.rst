@@ -9,3 +9,6 @@ be done. Feel free to add items here, too:
   python3. (lots of unicode vs. strings). Some tests are currently marked @skip
   and that should disappear.
 - Add some tests to most test files. Right now only the happy path is tested.
+- The main (landscape/main.py) doesn't quite work yet, but serves as a high-level
+  view of how things should (?) work. Feel free to run it, see what's not working,
+  and fix it :)
