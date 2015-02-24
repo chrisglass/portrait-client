@@ -1,4 +1,5 @@
 _trial_temp
 *.pyc
 *.swp
+*.swo
 __pycache__
