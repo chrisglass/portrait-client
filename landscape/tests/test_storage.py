@@ -52,7 +52,7 @@ class StorageTest(unittest.TestCase):
         result = self.storage.pop_all_pending_messages()
         self.assertEqual([some_message], result)
 
-    def test_poping_a_message_removes_it(self):
+    def test_poping_a_message_marks_it_as_sent(self):
         """
         Pop_all_pending_messages removes the messages from the database.
         """
@@ -61,7 +61,7 @@ class StorageTest(unittest.TestCase):
         self.storage.pop_all_pending_messages()
 
         with self.storage.connection as conn:
-            result = conn.execute("Select * from message_store")
+            result = conn.execute("Select * from message_store where sent == 0")
             self.assertEqual([], result.fetchall())
 
     def test_key_values_can_be_stored_and_retreived(self):

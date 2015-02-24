@@ -1,5 +1,4 @@
 import sqlite3
-from landscape.lib import bpickle
 
 
 DEFAULT_LANDSCAPE_DB_PATH = ""
@@ -34,7 +33,9 @@ class Storage(object):
         with self.connection as conn:
             conn.execute(
                 "CREATE TABLE message_store "
-                    "(id integer primary key, message varchar)")
+                "    (id integer primary key,"
+                "     message varchar,"
+                "     sent bool default (0))")
             conn.execute(
                 "CREATE TABLE documents "
                     "(key varchar unique, value varchar)")
@@ -55,11 +56,11 @@ class Storage(object):
         """
         results = []
         with self.connection as conn:
-            cursor = conn.execute("SELECT id, message FROM message_store")
+            cursor = conn.execute("SELECT id, message FROM message_store WHERE sent == 0")
             results = cursor.fetchall()
             ids = [str(row[0]) for row in results]
             id_list = ", ".join(ids)
-            conn.execute("DELETE FROM message_store where id IN (?)",
+            conn.execute("UPDATE message_store SET sent=1 where id IN (?)",
                          (id_list,))
         results = [row[1] for row in results]
         return results
