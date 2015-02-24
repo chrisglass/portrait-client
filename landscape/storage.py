@@ -49,7 +49,7 @@ class Storage(object):
         @param message; A dict representing the message to send. It will be
             serialized before being inserted in the DB.
         """
-        serialized = json.dumps(message)
+        serialized = json.dumps(message, separators=(",", ":"))
         with self.connection as conn:
             conn.execute("INSERT INTO message_store(message) VALUES (?)",
                          (serialized,))
