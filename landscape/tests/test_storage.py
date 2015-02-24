@@ -50,7 +50,7 @@ class StorageTest(unittest.TestCase):
         self.storage.pile_message(some_message)
 
         result = self.storage.pop_all_pending_messages()
-        self.assertEqual([(1, some_message)], result)
+        self.assertEqual([some_message], result)
 
     def test_poping_a_message_removes_it(self):
         """

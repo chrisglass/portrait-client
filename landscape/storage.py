@@ -1,4 +1,5 @@
 import sqlite3
+from landscape.lib import bpickle
 
 
 DEFAULT_LANDSCAPE_DB_PATH = ""
@@ -9,8 +10,7 @@ class Storage(object):
     A simple key-value store built on top of squite3.
 
     Since the database connection is thread-safe (as per the docs) we can
-    assume 
-    this class is as well (being a simple, thin layer on top of it).
+    assume this class is as well (being a simple, thin layer on top of it).
     """
 
     def __init__(self, database_path):
@@ -61,6 +61,7 @@ class Storage(object):
             id_list = ", ".join(ids)
             conn.execute("DELETE FROM message_store where id IN (?)",
                          (id_list,))
+        results = [row[1] for row in results]
         return results
 
     def set(self, key, value):
