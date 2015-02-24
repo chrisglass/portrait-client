@@ -1,3 +1,4 @@
+import json
 import sqlite3
 
 
@@ -44,15 +45,22 @@ class Storage(object):
         """
         Add a message to the message store to be sent to the server at next
         exchange.
+
+        @param message; A dict representing the message to send. It will be
+            serialized before being inserted in the DB.
         """
+        serialized = json.dumps(message)
         with self.connection as conn:
             conn.execute("INSERT INTO message_store(message) VALUES (?)",
-                         (message,))
+                         (serialized,))
 
     def pop_all_pending_messages(self):
         """
         Get a list of message to be set to the server, then remove them from
         the store.
+
+        @return The dict representation of the message, deserialized from the
+            DB.
         """
         results = []
         with self.connection as conn:
@@ -62,7 +70,7 @@ class Storage(object):
             id_list = ", ".join(ids)
             conn.execute("UPDATE message_store SET sent=1 where id IN (?)",
                          (id_list,))
-        results = [row[1] for row in results]
+        results = [json.loads(row[1]) for row in results]
         return results
 
     def set(self, key, value):

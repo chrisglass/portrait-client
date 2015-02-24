@@ -46,7 +46,7 @@ class StorageTest(unittest.TestCase):
         """
         Adding a message in the database using pile_message saves it properly.
         """
-        some_message = b'Whatever'  # We expect messages to be bytes
+        some_message = {"some_key": "some value"}
         self.storage.pile_message(some_message)
 
         result = self.storage.pop_all_pending_messages()
@@ -56,7 +56,7 @@ class StorageTest(unittest.TestCase):
         """
         Pop_all_pending_messages removes the messages from the database.
         """
-        some_message = b'Whatever'
+        some_message = {"some_key": "some value"}
         self.storage.pile_message(some_message)
         self.storage.pop_all_pending_messages()
 
