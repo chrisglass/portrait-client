@@ -2,6 +2,10 @@ import unittest
 
 from landscape.lib import bpickle
 
+REAL_ANSWER = (b"ds8:messageslds4:types14:accepted-typess5:typeslu8:register"
+               b"u4:test;;ds2:ids9:secure-ids11:insecure-idi999999;s4:types6:"
+               b"set-id;;s10:server-apiu3:3.3s11:server-uuids11:server-uuid;")
+
 
 class BPickleTest(unittest.TestCase):
 
@@ -60,10 +64,20 @@ class BPickleTest(unittest.TestCase):
         self.assertEqual(expected, result)
 
     def test_ping_result_message_encode(self):
-        """
-        Let's ensure the encoding/decoding is symmetric "by hand".
-        """
+        """Let's ensure the encoding/decoding is symmetric "by hand"."""
         payload = {"messages": True}
         expected = b'ds8:messagesb1;'
         result = bpickle.dumps(payload)
+        self.assertEqual(expected, result)
+
+    def test_real_registration_answer_loading(self):
+        """ We succeed at decoding a real-world example."""
+        expected = {
+            'server-api': '3.3',
+            'server-uuid': 'server-uuid',
+            'messages': [
+                {'types': ['register', 'test'], 'type': 'accepted-types'},
+                {'id': 'secure-id', 'insecure-id': 999999, 'type': 'set-id'}]}
+
+        result = bpickle.loads(REAL_ANSWER)
         self.assertEqual(expected, result)
