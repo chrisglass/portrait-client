@@ -1,9 +1,12 @@
+ACCOUNT="devel"
+
 check:
-	nosetests3 landscape
+	@nosetests3 landscape
 
 clean:
 	@find -name "*.pyc" -delete
 	@rm -rf _trial_temp
 
 run:
-	@python3 -m landscape chrisglass example_config.conf
+	@echo Registering against account $(ACCOUNT)
+	@python3 -m landscape $(ACCOUNT) example_config.conf
