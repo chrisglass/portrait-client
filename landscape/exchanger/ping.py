@@ -13,8 +13,8 @@ class Pinger(Scheduleable):
 
     def __init__(self, config, storage, post=requests.post):
         self.scheduling_delay = config.get("ping_interval")
-        self.ping_url = config.get("ping_url")
-        self.insecure_id = storage.get("insecure_id")
+        self.storage = storage
+        self.ping_url = "http://%s/ping" % config.get("server")
         self.post = post
 
     def run(self):
@@ -23,9 +23,13 @@ class Pinger(Scheduleable):
 
         Ask the question: are there messages for this computer ID?
         """
+        # Bail out if the insecure-id is not set. We will surely retry later.
+        insecure_id = self.storage.get("insecure_id")
+        if insecure_id is None:
+            return
+
         # Make the HTP request to the ping URL.
         # It's a POST with the "insecure ID" as single post data item.
-        insecure_id = self.insecure_id
         url = self.ping_url
 
         # Actually perform the POST.

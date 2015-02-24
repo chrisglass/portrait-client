@@ -11,13 +11,38 @@ class FauxScheduler(object):
 class PingTest(unittest.TestCase):
 
     def test_pings(self):
-        config = {"ping_url": "http://example.com/ping"}
+        config = {"server": "example.com"}
         storage = {"insecure_id": "whatever"}
-        scheduler = FauxScheduler()
         calls = []
+
         def fauxpost(*args, **kwargs):
             calls.append((args, kwargs))
+
         post = fauxpost
         pinger = ping.Pinger(config, storage, post=post)
 
         pinger.run()
+        expected = [
+            (('http://example.com/ping',),
+                {'data': {'insecure_id': 'whatever'}})]
+        self.assertEqual(expected, calls)
+
+    def test_bails_out_if_no_insecure_id(self):
+        """
+        The pinger does nothing if no insecure_id is set in the storage.
+        """
+        config = {"server": "example.com"}
+        storage = {"insecure_id": None}
+        calls = []
+
+        def fauxpost(*args, **kwargs):
+            calls.append((args, kwargs))
+
+        post = fauxpost
+        pinger = ping.Pinger(config, storage, post=post)
+
+        pinger.run()
+        expected = []
+        self.assertEqual(expected, calls)
+
+
