@@ -1,5 +1,6 @@
-_trial_temp
 *.pyc
-*.swp
 *.swo
+*.swp
+.coverage
 __pycache__
+_trial_temp
