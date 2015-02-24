@@ -11,7 +11,7 @@ class Registration(object):
     """
 
     def __init__(self, storage):
-        self._storage = storage
+        self.storage = storage
 
     def should_register(self):
         """
@@ -19,7 +19,7 @@ class Registration(object):
         server or not.
         """
         stored_id = self.storage.get("secure-id")
-        return bool(stored_id)
+        return not bool(stored_id)
 
     def register(self, computer_title, account_name, registration_password="",
                  tags="", access_group="", exchanger_factory=Exchanger):
