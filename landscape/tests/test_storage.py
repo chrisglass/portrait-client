@@ -74,3 +74,8 @@ class StorageTest(unittest.TestCase):
         self.storage.set(key, value)
         result = self.storage.get(key)
         self.assertEqual(value, result)
+
+    def test_get_non_existing_key(self):
+        """Getting a non-existant key returns None."""
+        result = self.storage.get("Nonexistant")
+        self.assertIsNone(result)

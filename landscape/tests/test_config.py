@@ -3,7 +3,7 @@ import tempfile
 import textwrap
 import unittest
 
-from landscape.config import load_config_file
+from landscape.config import load_config_file, DEFAULTS
 
 
 class Maintest(unittest.TestCase):
@@ -27,7 +27,7 @@ class Maintest(unittest.TestCase):
         with open(self.filename, "w") as thefile:
             thefile.write(contents)
 
-        result = load_config_file(self.filename)
+        result = load_config_file(self.filename, use_defaults=False)
         expected = {"ping_interval": 30, "server": "example.com"}
         self.assertEqual(expected, result)
 
@@ -44,7 +44,7 @@ class Maintest(unittest.TestCase):
             thefile.write(contents)
 
         result = load_config_file(self.filename)
-        expected = {"ping_interval": 15,
-                    "server": "landscape.canonical.com",
-                    "something_random": "Whatever"}
+        expected = {}
+        expected.update(DEFAULTS)
+        expected.update({"something_random": "Whatever"})
         self.assertEqual(expected, result)

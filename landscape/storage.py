@@ -80,4 +80,7 @@ class Storage(object):
         with self.connection as conn:
             cursor = conn.execute(
                 "SELECT value FROM documents WHERE key == ?", (key,))
-            return cursor.fetchone()[0] # THe result is wrapped in a tuple
+            result = cursor.fetchone()
+            if result:
+                result = result[0]  # The result is wrapped in a tuple
+            return result
