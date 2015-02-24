@@ -1,9 +1,13 @@
-import yaml
 import os
+import yaml
 
 
 # The landscape client configuration file. This is expected to be yaml.
 LANDSCAPE_CLIENT_CONF = "/etc/landscape/client.conf"
+
+DEFAULTS = {
+    "server": "landscape.canonical.com",
+    "ping_interval": 15}
 
 
 def load_config_file(config=LANDSCAPE_CLIENT_CONF):
@@ -12,9 +16,9 @@ def load_config_file(config=LANDSCAPE_CLIENT_CONF):
     """
     assert os.path.exists(config), "The configuration file is not found."
 
-    contents = None
+    contents = DEFAULTS.copy()  # Defaults is a global dict!
     with open(config, "r") as thefile:
-        contents = yaml.load(thefile.read())
+        loaded = yaml.load(thefile.read())
+        contents.update(loaded)
 
-    assert contents, "The configuration file is empty."
     return contents
