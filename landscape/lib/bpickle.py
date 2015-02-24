@@ -48,31 +48,34 @@ def loads(byte_string, _lt=loads_table):
         return _lt[unicode_string[0]](unicode_string, 0)[0]
     except KeyError as e:
         raise ValueError("Unknown type character: %s" % e)
-    except IndexError:
+    except IndexError:  #pragma: nocover
+        # NOTE: Not sure if reachable (chrisglass during py3 conversion)
         raise ValueError("Corrupted data")
+
 
 def dumps_bool(obj):
     return "b%d" % int(obj)
 
+
 def dumps_int(obj):
     return "i%s;" % obj
+
 
 def dumps_float(obj):
     return "f%r;" % obj
 
+
 def dumps_str(obj):
     return "s%s:%s" % (len(obj), obj)
 
-def dumps_unicode(obj):
-    #TODO: This is unwired for now! Remove!
-    obj = obj.encode("utf-8")
-    return "u%s:%s" % (len(obj), obj)
 
 def dumps_list(obj, _dt=dumps_table):
     return "l%s;" % "".join([_dt[type(val)](val) for val in obj])
 
+
 def dumps_tuple(obj, _dt=dumps_table):
     return "t%s;" % "".join([_dt[type(val)](val) for val in obj])
+
 
 def dumps_dict(obj, _dt=dumps_table):
     keys = list(obj.keys())
@@ -85,29 +88,30 @@ def dumps_dict(obj, _dt=dumps_table):
         append(_dt[type(val)](val))
     return "d%s;" % "".join(res)
 
+
 def dumps_none(obj):
     return "n"
 
+
 def loads_bool(str, pos):
     return bool(int(str[pos+1])), pos+2
+
 
 def loads_int(str, pos):
     endpos = str.index(";", pos)
     return int(str[pos+1:endpos]), endpos+1
 
+
 def loads_float(str, pos):
     endpos = str.index(";", pos)
     return float(str[pos+1:endpos]), endpos+1
+
 
 def loads_str(str, pos):
     startpos = str.index(":", pos)+1
     endpos = startpos+int(str[pos+1:startpos-1])
     return str[startpos:endpos], endpos
 
-def loads_unicode(str, pos):
-    startpos = str.index(":", pos)+1
-    endpos = startpos+int(str[pos+1:startpos-1])
-    return str[startpos:endpos].decode("utf-8"), endpos
 
 def loads_list(str, pos, _lt=loads_table):
     pos += 1
@@ -118,6 +122,7 @@ def loads_list(str, pos, _lt=loads_table):
         append(obj)
     return res, pos+1
 
+
 def loads_tuple(str, pos, _lt=loads_table):
     pos += 1
     res = []
@@ -126,6 +131,7 @@ def loads_tuple(str, pos, _lt=loads_table):
         obj, pos = _lt[str[pos]](str, pos)
         append(obj)
     return tuple(res), pos+1
+
 
 def loads_dict(str, pos, _lt=loads_table):
     pos += 1
@@ -136,16 +142,15 @@ def loads_dict(str, pos, _lt=loads_table):
         res[key] = val
     return res, pos+1
 
+
 def loads_none(str, pos):
     return None, pos+1
 
 
 dumps_table.update({       bool: dumps_bool,
                             int: dumps_int,
-                           #long: dumps_int,
                           float: dumps_float,
                             str: dumps_str,
-                        #unicode: dumps_unicode,
                            list: dumps_list,
                           tuple: dumps_tuple,
                            dict: dumps_dict,

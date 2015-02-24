@@ -53,6 +53,18 @@ class BPickleTest(unittest.TestCase):
         long = 99999999999999999999999999999
         self.assertEqual(bpickle.loads(bpickle.dumps(long)), long)
 
+    def test_loads_empty_string(self):
+        self.assertRaises(ValueError, bpickle.loads, "")
+
+    def test_dumps_unsupported_object(self):
+        class something(object):
+            pass
+        self.assertRaises(ValueError, bpickle.dumps, something())
+
+    def test_loads_unknown_character(self):
+        wrong = b'zblah'  # 'z' is not a valid type character.
+        self.assertRaises(ValueError, bpickle.loads, wrong)
+
     def test_ping_result_message_decode(self):
         """
         This is an example message received from an actual ping server. Let's
