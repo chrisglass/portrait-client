@@ -64,3 +64,13 @@ class StorageTest(unittest.TestCase):
             result = conn.execute("Select * from message_store")
             self.assertEqual([], result.fetchall())
 
+    def test_key_values_can_be_stored_and_retreived(self):
+        """
+        The "documents" part of the tables can be used to store arbitrary
+        key/value pairs.
+        """
+        key = "foo"
+        value = "Something"
+        self.storage.set(key, value)
+        result = self.storage.get(key)
+        self.assertEqual(value, result)

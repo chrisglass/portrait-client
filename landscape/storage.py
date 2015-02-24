@@ -9,7 +9,8 @@ class Storage(object):
     A simple key-value store built on top of squite3.
 
     Since the database connection is thread-safe (as per the docs) we can
-    assume this class is as well (being a simple, thin layer on top of it).
+    assume 
+    this class is as well (being a simple, thin layer on top of it).
     """
 
     def __init__(self, database_path):
@@ -34,6 +35,9 @@ class Storage(object):
             conn.execute(
                 "CREATE TABLE message_store "
                     "(id integer primary key, message varchar)")
+            conn.execute(
+                "CREATE TABLE documents "
+                    "(key varchar unique, value varchar)")
 
     def pile_message(self, message):
         """
@@ -58,3 +62,20 @@ class Storage(object):
             conn.execute("DELETE FROM message_store where id IN (?)",
                          (id_list,))
         return results
+
+    def set(self, key, value):
+        """
+        Persist a key/value pair in the database.
+        """
+        with self.connection as conn:
+            conn.execute("INSERT INTO documents(key, value) VALUES (?, ?)",
+                         (key, value,))
+
+    def get(self, key):
+        """
+        Retreive the value matching a given key from the database.
+        """
+        with self.connection as conn:
+            cursor = conn.execute(
+                "SELECT value FROM documents WHERE key == ?", (key,))
+            return cursor.fetchone()[0] # THe result is wrapped in a tuple
