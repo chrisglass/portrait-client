@@ -21,7 +21,7 @@ def load_config_file(config=LANDSCAPE_CLIENT_CONF, use_defaults=True):
     if use_defaults:
         contents.update(DEFAULTS)
     with open(config, "r") as thefile:
-        loaded = yaml.load(thefile.read())
+        loaded = yaml.safe_load(thefile.read())
         contents.update(loaded)
 
     return contents
