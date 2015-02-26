@@ -3,11 +3,13 @@
 import sched
 import sys
 import time
+import itertools
 
 from landscape import config
 from landscape.exchanger.ping import Pinger
 from landscape.exchanger.exchange import Exchanger
 from landscape.exchanger.register import Registration
+from landscape.reporters.hardware import HardwareReporter
 from landscape.scheduler import initial_schedule
 from landscape.storage import Storage
 
@@ -16,6 +18,8 @@ from landscape.storage import Storage
 # is. Feel free to bang on it until it works :)
 
 EXCHANGE_MODULES = [Pinger, Exchanger]
+
+REPORTER_MODULES = [HardwareReporter]
 
 # TODO: Make this better! The poor man's argument "parsing"
 account_name = sys.argv[1]
@@ -31,7 +35,7 @@ storage = Storage("test.db")
 
 def start_all_modules(config, storage, scheduler):
 
-    for module in EXCHANGE_MODULES:
+    for module in itertools.chain(EXCHANGE_MODULES, REPORTER_MODULES):
         instance = module(config, storage)
         initial_schedule(scheduler, instance)
 

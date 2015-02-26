@@ -15,6 +15,7 @@ class Scheduleable(object):
 
     scheduling_delay = 15  # seconds
     thread_name = "landscape-client-module"
+    run_immediately = False  # Whether or not to run at daemon startup.
 
     def run(self):
         pass  # Should be implemented by subclasses
@@ -41,5 +42,9 @@ def initial_schedule(scheduler, module):
 
     This is used as the first "bootstrap" run on service start.
     """
-    scheduler.enter(module.scheduling_delay, DEFAULT_PRIORITY,
-                    action=run_and_reschedule, argument=(scheduler, module))
+    if module.run_immediately:
+        run_and_reschedule(module)
+    else:
+        scheduler.enter(module.scheduling_delay, DEFAULT_PRIORITY,
+                        action=run_and_reschedule,
+                        argument=(scheduler, module))

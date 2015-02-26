@@ -17,3 +17,6 @@ class SchedulerTest(unittest.TestCase):
         module = Scheduleable()
 
         run_and_reschedule(scheduler, module)
+
+    def test_write_some(self):
+        self.fail("Write tests!")
