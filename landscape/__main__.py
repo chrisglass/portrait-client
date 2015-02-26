@@ -6,6 +6,7 @@ import time
 
 from landscape import config
 from landscape.exchanger.ping import Pinger
+from landscape.exchanger.exchange import Exchanger
 from landscape.exchanger.register import Registration
 from landscape.scheduler import initial_schedule
 from landscape.storage import Storage
@@ -14,7 +15,7 @@ from landscape.storage import Storage
 # TODO: This doens't quite work yet, but the intent is to show what the idea
 # is. Feel free to bang on it until it works :)
 
-EXCHANGE_MODULES = [Pinger]
+EXCHANGE_MODULES = [Pinger, Exchanger]
 
 # TODO: Make this better! The poor man's argument "parsing"
 account_name = sys.argv[1]
