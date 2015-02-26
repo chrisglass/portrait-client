@@ -2,6 +2,7 @@ import unittest
 import time
 import json
 import numpy  #XXX: this is not part of the real dependencies! Install manually
+import msgpack  #XXX: Not in the deps either!
 
 from landscape.lib import bpickle
 
@@ -32,6 +33,8 @@ class BpickleBechmarksTest(unittest.TestCase):
         """
         bpickle_results = []
         json_results = []
+        msgpack_results = []
+
         for i in range(1000):
 
             # Time the conversion
@@ -39,20 +42,33 @@ class BpickleBechmarksTest(unittest.TestCase):
             result = bpickle.dumps(self.big_dict)
             assert result is not None
             bpickle_stop = time.time()
+
             json_start = time.time()
             result2 = json.dumps(self.big_dict)
             assert result2 is not None
             json_stop = time.time()
 
+
+            msgpack_start = time.time()
+            result2 = msgpack.dumps(self.big_dict)
+            assert result2 is not None
+            msgpack_stop = time.time()
+
+
             # Compute elapsed time for each
             bpickle_elapsed = bpickle_stop - bpickle_start
             json_elapsed = json_stop - json_start
+            msgpack_elapsed = msgpack_stop - msgpack_start
 
             # Append for this run's results.
             bpickle_results.append(bpickle_elapsed)
             json_results.append(json_elapsed)
+            msgpack_results.append(msgpack_elapsed)
 
         print("Bpickle average: %f" % numpy.mean(bpickle_results))
         print("Bpickle standard deviation: %f" % numpy.std(bpickle_results))
         print("JSON average: %f" % numpy.mean(json_results))
         print("JSON standard deviation: %f" % numpy.std(json_results))
+        print("msgpack average: %f" % numpy.mean(msgpack_results))
+        print("msgpack standard deviation: %f" % numpy.std(msgpack_results))
+        import ipdb; ipdb.set_trace()
