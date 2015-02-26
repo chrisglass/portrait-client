@@ -12,6 +12,10 @@ class Exchanger(Scheduleable):
     The idea is that it should periodically look in the message store and send
     all unsent messages.
     """
+
+    scheduling_delay = 120  # Run every 2 minutes?
+    thread_name = "landscape-client-exchanger"
+
     def __init__(self, storage, config, post=requests.post):
         self.storage = storage
         self.post = post
@@ -22,6 +26,10 @@ class Exchanger(Scheduleable):
         Look in the message store and send any message you find!
         """
         messages = self.storage.pop_all_pending_messages()
+
+        # Bail out immediately if there are no messages to send.
+        if len(messages) == 0:
+            return
 
         # The exchange's payload. It can contain a number of messages (not
         # just one).
@@ -56,13 +64,14 @@ class Exchanger(Scheduleable):
         received_messages = {
             message["type"]:message for message in answer["messages"]}
 
-        for message_type, message in received_messages.iteritems():
-            handler_name = message_type.tolower()
+        for message_type, message in received_messages.items():
+            handler_name = message_type.lower()
             handler_name = handler_name.replace("-", "_")
             handler_name = "_handle_%s" % handler_name
             handler = getattr(self, handler_name)
 
-            assert handler is not None, "Couldn't find a message handler for '%s'." % message_type
+            error_message = "Couldn't find a handler for '%s'." % message_type
+            assert handler is not None, error_message
 
             # Call the message handler
             handler(message)
