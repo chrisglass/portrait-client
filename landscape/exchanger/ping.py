@@ -34,3 +34,4 @@ class Pinger(Scheduleable):
 
         # Actually perform the POST.
         result = self.post(url, data={"insecure_id": insecure_id})
+        #TODO: Actually do something now that we know if there are new messages
