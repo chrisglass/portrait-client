@@ -1,7 +1,7 @@
 import unittest
 import time
 import json
-import numpy
+import numpy  #XXX: this is not part of the real dependencies! Install manually
 
 from landscape.lib import bpickle
 
