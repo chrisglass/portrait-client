@@ -64,13 +64,11 @@ class Exchanger(Scheduleable):
         received_messages = {
             message["type"]:message for message in answer["messages"]}
 
-        for message_type, message in received_messages.items():
-            handler_name = message_type.lower()
-            handler_name = handler_name.replace("-", "_")
-            handler_name = "_handle_%s" % handler_name
+        for msgtype, message in received_messages.items():
+            handler_name = "_handle_%s" % msgtype.lower().replace("-", "_")
             handler = getattr(self, handler_name)
 
-            error_message = "Couldn't find a handler for '%s'." % message_type
+            error_message = "Couldn't find a handler for '%s'." % msgtype
             assert handler is not None, error_message
 
             # Call the message handler
