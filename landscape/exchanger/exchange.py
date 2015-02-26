@@ -12,9 +12,10 @@ class Exchanger(Scheduleable):
     The idea is that it should periodically look in the message store and send
     all unsent messages.
     """
-    def __init__(self, storage, post=requests.post):
+    def __init__(self, storage, config, post=requests.post):
         self.storage = storage
         self.post = post
+        self.config = config
 
     def run(self):
         """
@@ -43,14 +44,15 @@ class Exchanger(Scheduleable):
                    "Content-Type": "application/octet-stream"}
 
         # Let's perform the actual POST.
-        result = self.post(
-            "https://landscape.canonical.com/message-system",
-            data=bpayload, headers=headers)
+        url = "https://%s/message-system" % self.config["server_name"]
+        result = self.post(url, data=bpayload, headers=headers)
 
+        self._process_result(result)
+
+    def _process_result(self, result):
+        # The reply is a bpickle again.
         answer = bpickle.loads(result.content)
-        self._process_answer(answer)
 
-    def _process_answer(self, answer):
         received_messages = {
             message["type"]:message for message in answer["messages"]}
 

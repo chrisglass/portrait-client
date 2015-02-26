@@ -10,8 +10,9 @@ class Registration(object):
     This class handles the registration logic.
     """
 
-    def __init__(self, storage):
+    def __init__(self, storage, config):
         self.storage = storage
+        self.config = config
 
     def should_register(self):
         """
@@ -56,5 +57,5 @@ class Registration(object):
         # We would normally wait for the exchanger to be scheduled, but it
         # is not worth it to wait for anything if we're not registered, so
         # let's just run in-thread:
-        exchange = exchanger_factory(self.storage)
+        exchange = exchanger_factory(self.storage, self.config)
         exchange.run()

@@ -36,7 +36,7 @@ def start_all_modules(config, storage, scheduler):
 
 
 if __name__ == "__main__":
-    registration = Registration(storage)
+    registration = Registration(storage, config)
     if registration.should_register():
         # TODO: Hook the UI for the interactive registration here
         registration.register(computer_title=config["computer_title"],
