@@ -8,7 +8,7 @@ class HardwareReporter(Scheduleable):
     A simple plugin reporting lshw output.
     """
 
-    scheduling_deplay = 60 * 60 * 24
+    scheduling_delay = 60 * 60 * 24
     thread_name = "hardware-reporter"
     run_immediately = True
 
@@ -16,8 +16,8 @@ class HardwareReporter(Scheduleable):
         self.config = config
         self.storage = storage
 
-    def get_message(self):
-        output = subprocess.check_output("/usr/bin/lshw -xml -quiet")
+    def get_message(self, check_output=subprocess.check_output):
+        output = check_output(["/usr/bin/lshw", "-xml", "-quiet"])
         return {"type": "hardware-info", "data": output}
 
     def run(self):
