@@ -1,8 +1,8 @@
 import unittest
 import time
 import json
-import numpy  #XXX: this is not part of the real dependencies! Install manually
-import msgpack  #XXX: Not in the deps either!
+#import numpy  #XXX: this is not part of the real dependencies! Install manually
+#import msgpack  #XXX: Not in the deps either!
 
 from landscape.lib import bpickle
 
