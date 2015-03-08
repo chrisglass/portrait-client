@@ -17,7 +17,7 @@ Subject to change, but, the general idea is:
 Having a scheduler (sched) coordinate several events:
 - A message sender that looks into a message store (sqlite) if messages are to
   be sent, and sends them all.
-- A set of monitors that "report" status by inserting messages in the message store.
+- A set of reporters that "report" status by inserting messages in the message store.
 - A set of managers that action on the running system.
 
 Monitors and managers should be maintained as a set of classes.
