@@ -17,3 +17,5 @@ be done. Feel free to add items here, too:
 - Implement the "expected sequence" dance
 - Popping out all of the messages is not a very good idea, we should add "sent" and "confirmed" flags to the database table.
 - Write more modules!
+- Write an interactive executable that generates the configuration file.
+- Deal with SSL certificate pinning and interactive check.
