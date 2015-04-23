@@ -1,27 +1,31 @@
+import configparser
 import os
-import yaml
 
 
-# The landscape client configuration file. This is expected to be yaml.
-LANDSCAPE_CLIENT_CONF = "/etc/landscape/client.conf"
+# The portrait client configuration file. This is expected to be an INI file
+# with a single section called "portrait".
+LANDSCAPE_CLIENT_CONF = "/etc/portrait/client.conf"
 
 DEFAULTS = {
     "server": "landscape.canonical.com",
-    "ping_interval": 15,
-    "computer_title": "My test portrait client"}
+    "ping_interval": "15",
+    "computer_title": "My test portrait client",
+    "main_store": "/var/lib/portrait/main_store.db"}
 
 
-def load_config_file(config=LANDSCAPE_CLIENT_CONF, use_defaults=True):
+def load_config_file(config_file=LANDSCAPE_CLIENT_CONF, use_defaults=True):
     """
-    Load the configuration file, and returned the parsed (from yaml) contents.
+    Load the configuration file, and returned the parsed contents.
     """
-    assert os.path.exists(config), "The configuration file is not found."
+    assert os.path.exists(config_file), "The configuration file is not found."
 
     contents = {}
     if use_defaults:
         contents.update(DEFAULTS)
-    with open(config, "r") as thefile:
-        loaded = yaml.safe_load(thefile.read())
-        contents.update(loaded)
+    config = configparser.ConfigParser()
+    config.read(config_file)
+
+    assert "portrait" in config.sections()
+    contents.update(dict(config["portrait"]))
 
     return contents
