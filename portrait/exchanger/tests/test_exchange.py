@@ -19,6 +19,12 @@ class FauxStorage(object):
         return self.messages
 
 
+def faux_storage_factory(messages=None):
+    if messages is None:
+        messages = []
+    return lambda x: FauxStorage(messages)
+
+
 class ExchangerTest(unittest.TestCase):
 
     def test_exchanger_run_no_answer_processing(self):
@@ -36,13 +42,16 @@ class ExchangerTest(unittest.TestCase):
         def stub_process_result(result):
             process_calls.append(result)
 
-        exchanger = Exchanger(FauxStorage([{"type": "test"}]),
-                              {"server_name": "example.com"}, stub_post)
+        config = {"server_name": "example.com"}
+        messages = [{"type": "test"}]
+        exchanger = Exchanger(
+            config, post=stub_post,
+            main_store_factory=faux_storage_factory(messages))
 
         # Monkeypatching
         exchanger._process_result = stub_process_result
 
-        exchanger.run()
+        exchanger.run_wrapper()
 
         self.assertEqual([None], process_calls)
         expected_payload = {
@@ -72,13 +81,15 @@ class ExchangerTest(unittest.TestCase):
         def stub_process_result(result):
             process_calls.append(result)
 
+        config = {"server_name": "example.com"}
+        exchanger = Exchanger(
+            config, post=stub_post,
+            main_store_factory=faux_storage_factory())
 
-        exchanger = Exchanger(FauxStorage([]),
-                              {"server_name": "example.com"}, stub_post)
         # Monkeypatching
         exchanger._process_result = stub_process_result
 
-        exchanger.run()
+        exchanger.run_wrapper()
 
         self.assertEqual([], process_calls)
         self.assertEqual([], post_calls)
@@ -94,7 +105,7 @@ class ExchangerTest(unittest.TestCase):
         contents = namedtuple("Answer", "content")
         contents.content = banswer
 
-        exchanger = Exchanger({}, {})
+        exchanger = Exchanger({})
 
         calls = []
 
@@ -111,7 +122,8 @@ class ExchangerTest(unittest.TestCase):
         Handle-set-id sets the secure-id and insecure-id keys in storage.
         """
         storage = FauxStorage()
-        exchanger = Exchanger(storage, {})
+        exchanger = Exchanger({}, main_store_factory=lambda x: storage)
+        exchanger._instanciate_main_store()
 
         exchanger._handle_set_id({"type": "set-id",
                                   "id": "secure",

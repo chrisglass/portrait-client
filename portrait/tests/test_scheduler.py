@@ -14,7 +14,7 @@ class SchedulerTest(unittest.TestCase):
         it is rescheduled after module.scheduling_delay has elapsed.
         """
         scheduler = sched.scheduler(time.time, time.sleep)
-        module = Scheduleable()
+        module = Scheduleable({}, lambda x: None)
 
         run_and_reschedule(scheduler, module)
 

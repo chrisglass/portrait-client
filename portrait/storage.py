@@ -2,18 +2,21 @@ import json
 import sqlite3
 
 
-DEFAULT_LANDSCAPE_DB_PATH = ""
+DEFAULT_PORTRAIT_DB_PATH = "/var/lib/portrait/main_store.db"
 
 
-class Storage(object):
+class MainStore(object):
     """
     A simple key-value store built on top of squite3.
 
-    Since the database connection is thread-safe (as per the docs) we can
-    assume this class is as well (being a simple, thin layer on top of it).
+    Each process/thread in the client should instanciate its own copy of the
+    Storage object, as this will in turn create it's own thread-local
+    sqlite3.Connection object, and therefore pass all locking/concurrency
+    solving to the underlying database.
     """
 
-    def __init__(self, database_path):
+    def __init__(self, config):
+        database_path = config.get("main_store")
         self.database_path = database_path
         # Connect to the squite3 database at the specified path
         self.connection = sqlite3.connect(self.database_path)

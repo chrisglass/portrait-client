@@ -21,9 +21,10 @@ class PingTest(unittest.TestCase):
             calls.append((args, kwargs))
 
         post = fauxpost
-        pinger = ping.Pinger(config, storage, post=post)
+        pinger = ping.Pinger(config, post=post,
+                             main_store_factory=lambda x: storage)
 
-        pinger.run()
+        pinger.run_wrapper()
         expected = [
             (('http://example.com/ping',),
                 {'data': {'insecure_id': 'whatever'}})]
@@ -41,9 +42,10 @@ class PingTest(unittest.TestCase):
             calls.append((args, kwargs))
 
         post = fauxpost
-        pinger = ping.Pinger(config, storage, post=post)
+        pinger = ping.Pinger(config, post=post,
+                             main_store_factory=lambda x: storage)
 
-        pinger.run()
+        pinger.run_wrapper()
         expected = []
         self.assertEqual(expected, calls)
 
@@ -61,8 +63,9 @@ class PingTest(unittest.TestCase):
 
         post = fauxpost
 
-        pinger = ping.Pinger(config, storage, post=post)
-        pinger.run()
+        pinger = ping.Pinger(config, post=post,
+                             main_store_factory=lambda x: storage)
+        pinger.run_wrapper()
 
         expected = [
             (('http://example.com/ping',),

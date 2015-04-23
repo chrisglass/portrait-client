@@ -9,7 +9,7 @@ class RegisterTest(unittest.TestCase):
         We should only register with the server if the secure-id is not set.
         """
         storage = {"secure-id": None}
-        registration = Registration(storage, {})
+        registration = Registration({}, main_store_factory=lambda x: storage)
         self.assertTrue(registration.should_register())
 
     def test_should_not_register(self):
@@ -17,5 +17,5 @@ class RegisterTest(unittest.TestCase):
         We should only register with the server if the secure-id is not set.
         """
         storage = {"secure-id": "secure!"}
-        registration = Registration(storage, {})
+        registration = Registration({}, main_store_factory=lambda x: storage)
         self.assertFalse(registration.should_register())

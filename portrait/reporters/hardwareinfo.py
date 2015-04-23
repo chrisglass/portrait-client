@@ -1,6 +1,7 @@
 import subprocess
 
 from portrait.scheduler import Scheduleable
+from portrait.storage import MainStore
 
 
 class HardwareReporter(Scheduleable):
@@ -12,9 +13,9 @@ class HardwareReporter(Scheduleable):
     thread_name = "hardware-reporter"
     run_immediately = True
 
-    def __init__(self, config, storage):
+    def __init__(self, config, main_storage_factory=MainStore):
+        super(HardwareReporter, self).__init__(config, main_storage_factory)
         self.config = config
-        self.storage = storage
 
     def get_message(self, check_output=subprocess.check_output):
         output = check_output(["/usr/bin/lshw", "-xml", "-quiet"])
@@ -22,4 +23,4 @@ class HardwareReporter(Scheduleable):
 
     def run(self):
         message = self.get_message()
-        self.storage.pile_message(message)
+        self.main_store.pile_message(message)

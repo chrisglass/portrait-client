@@ -3,6 +3,7 @@ import requests
 from portrait import SERVER_API
 from portrait.lib import bpickle
 from portrait.scheduler import Scheduleable
+from portrait.storage import MainStore
 
 
 class Exchanger(Scheduleable):
@@ -16,8 +17,15 @@ class Exchanger(Scheduleable):
     scheduling_delay = 120  # Run every 2 minutes?
     thread_name = "portrait-client-exchanger"
 
-    def __init__(self, storage, config, post=requests.post):
-        self.storage = storage
+    def __init__(self, config, post=requests.post, main_store=None,
+                 main_store_factory=MainStore):
+        super(Exchanger, self).__init__(config, main_store_factory)
+
+        # For the registration message, we are passed the main_store to use
+        # directly since it's run in-thread/process.
+        if main_store is not None:
+            self.main_store = main_store
+
         self.post = post
         self.config = config
 
@@ -25,7 +33,7 @@ class Exchanger(Scheduleable):
         """
         Look in the message store and send any message you find!
         """
-        messages = self.storage.pop_all_pending_messages()
+        messages = self.main_store.pop_all_pending_messages()
 
         # Bail out immediately if there are no messages to send.
         if len(messages) == 0:
@@ -76,5 +84,5 @@ class Exchanger(Scheduleable):
 
     def _handle_set_id(self, message):
         """Handle the "set-id" messages from the server."""
-        self.storage.set("secure-id", message["id"])
-        self.storage.set("insecure-id", message["insecure-id"])
+        self.main_store.set("secure-id", message["id"])
+        self.main_store.set("insecure-id", message["insecure-id"])

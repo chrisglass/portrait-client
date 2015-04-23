@@ -1,19 +1,21 @@
 import configparser
 import os
 
+from portrait.storage import DEFAULT_PORTRAIT_DB_PATH
+
 
 # The portrait client configuration file. This is expected to be an INI file
 # with a single section called "portrait".
-LANDSCAPE_CLIENT_CONF = "/etc/portrait/client.conf"
+PORTRAIT_CLIENT_CONF = "/etc/portrait/client.conf"
 
 DEFAULTS = {
     "server": "landscape.canonical.com",
     "ping_interval": "15",
     "computer_title": "My test portrait client",
-    "main_store": "/var/lib/portrait/main_store.db"}
+    "main_store": DEFAULT_PORTRAIT_DB_PATH}
 
 
-def load_config_file(config_file=LANDSCAPE_CLIENT_CONF, use_defaults=True):
+def load_config_file(config_file=PORTRAIT_CLIENT_CONF, use_defaults=True):
     """
     Load the configuration file, and returned the parsed contents.
     """

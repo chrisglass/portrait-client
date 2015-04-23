@@ -14,16 +14,34 @@ class Scheduleable(object):
     """
 
     scheduling_delay = 15  # seconds
-    thread_name = "landscape-client-module"
+    thread_name = "portrait-client-module"
     run_immediately = False  # Whether or not to run at daemon startup.
+    main_store = None
+
+    def __init__(self, config, main_store_factory):
+        self.config = config
+        self.main_store_factory = main_store_factory
+
+    def run_wrapper(self):
+        """
+        This is what the scheduler calls, and this takes care of instanciating
+        a new connection to the main store (since it should be thread-local).
+        """
+        self._instanciate_main_store()
+        self.run()
 
     def run(self):
         pass  # Should be implemented by subclasses
 
+    def _instanciate_main_store(self):
+        if self.main_store is None:  # If the subclass already set it, noop.
+            self.main_store = self.main_store_factory(self.config)
+
 
 def run_in_thread(module):
     # Run the module in a thread.
-    thread = threading.Thread(target=module.run, name=module.thread_name)
+    thread = threading.Thread(target=module.run_wrapper,
+                              name=module.thread_name)
     thread.start()
 
 

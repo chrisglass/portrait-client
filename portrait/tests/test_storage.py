@@ -3,12 +3,15 @@ import tempfile
 import sqlite3
 import os
 
-from portrait.storage import Storage
+from portrait.storage import MainStore
 
 
-class StubbedStorage(Storage):
+class StubbedStorage(MainStore):
 
     calls = []
+
+    def __init__(self, file_path):
+        super(StubbedStorage, self).__init__({"main_store": file_path})
 
     def _create_schema(self):
         self.calls.append(True)
@@ -17,7 +20,7 @@ class StubbedStorage(Storage):
 class StorageTest(unittest.TestCase):
 
     def setUp(self):
-        self.storage = Storage(":memory:")
+        self.storage = MainStore({"main_store": ":memory:"})
 
     def test_storage_creates_schema(self):
         """

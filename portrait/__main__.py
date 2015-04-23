@@ -11,7 +11,7 @@ from portrait.exchanger.exchange import Exchanger
 from portrait.exchanger.register import Registration
 from portrait.reporters.hardware import HardwareReporter
 from portrait.scheduler import initial_schedule
-from portrait.storage import Storage
+from portrait.storage import MainStore
 
 
 # TODO: This doens't quite work yet, but the intent is to show what the idea
@@ -31,21 +31,20 @@ assert config_file
 
 scheduler = sched.scheduler(time.time, time.sleep)
 config = config.load_config_file(config=config_file)
-storage = Storage("test.db")
+#storage = Storage("test.db")
 
-def start_all_modules(config, storage, scheduler):
-
+def start_all_modules(config, scheduler):
     for module in itertools.chain(EXCHANGE_MODULES, REPORTER_MODULES):
-        instance = module(config, storage)
+        instance = module(config)
         initial_schedule(scheduler, instance)
 
 
 if __name__ == "__main__":
-    registration = Registration(storage, config)
+    registration = Registration(config)
     if registration.should_register():
         # TODO: Hook the UI for the interactive registration here
         registration.register(computer_title=config["computer_title"],
                               account_name=account_name)
 
-    start_all_modules(config, storage, scheduler)
+    start_all_modules(config, scheduler)
     #scheduler.run()

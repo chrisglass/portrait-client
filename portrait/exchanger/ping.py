@@ -1,6 +1,7 @@
 import requests
 
 from portrait.scheduler import Scheduleable
+from portrait.storage import MainStore
 
 
 class Pinger(Scheduleable):
@@ -9,11 +10,13 @@ class Pinger(Scheduleable):
     ping server every "ping_interval" (as defined in the configuration).
     """
 
-    thread_name = "landscape-client-pinger"
+    thread_name = "portrait-client-pinger"
 
-    def __init__(self, config, storage, post=requests.post):
+    def __init__(self, config, post=requests.post,
+                 main_store_factory=MainStore):
+        super(Pinger, self).__init__(config, main_store_factory)
+
         self.scheduling_delay = config.get("ping_interval")
-        self.storage = storage
         self.ping_url = "http://%s/ping" % config.get("server")
         self.post = post
 
@@ -22,13 +25,16 @@ class Pinger(Scheduleable):
         This is invoked by the scheduler every ping_interval seconds.
 
         Ask the question: are there messages for this computer ID?
+
+        The self.main_store instance variable is accessible and holds a
+        MainStore instance (see portrait.storage.Scheduleable).
         """
-        # Bail out if the insecure-id is not set. We will surely retry later.
-        insecure_id = self.storage.get("insecure_id")
+        # Bail out if the insecure-id is not set. We will retry next run anyway
+        insecure_id = self.main_store.get("insecure_id")
         if insecure_id is None:
             return
 
-        # Make the HTP request to the ping URL.
+        # Make the HTTP request to the ping URL.
         # It's a POST with the "insecure ID" as single post data item.
         url = self.ping_url
 
