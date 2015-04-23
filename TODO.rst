@@ -14,3 +14,5 @@ be done. Feel free to add items here, too:
   and fix it :)
 - DONE Switch to using multiprocessing instead of threads
 - DONE Make the squite access thread-proof (don't share a connection object, AFAICT)
+- Implement the "expected sequence" dance
+- Popping out all of the messages is not a very good idea, we should add "sent" and "confirmed" flags to the database table.
