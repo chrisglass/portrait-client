@@ -17,6 +17,7 @@ class MainStore(object):
 
     def __init__(self, config):
         database_path = config.get("main_store")
+        assert database_path is not None, "No 'main_store' config key found!"
         self.database_path = database_path
         # Connect to the squite3 database at the specified path
         self.connection = sqlite3.connect(self.database_path)

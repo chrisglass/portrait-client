@@ -1,4 +1,6 @@
-import threading
+import multiprocessing
+
+from portrait.storage import MainStore
 
 
 DEFAULT_PRIORITY = 3  # 1 is highest. That leaves room for refinement.
@@ -18,7 +20,7 @@ class Scheduleable(object):
     run_immediately = False  # Whether or not to run at daemon startup.
     main_store = None
 
-    def __init__(self, config, main_store_factory):
+    def __init__(self, config, main_store_factory=MainStore):
         self.config = config
         self.main_store_factory = main_store_factory
 
@@ -38,20 +40,23 @@ class Scheduleable(object):
             self.main_store = self.main_store_factory(self.config)
 
 
-def run_in_thread(module):
-    # Run the module in a thread.
-    thread = threading.Thread(target=module.run_wrapper,
-                              name=module.thread_name)
-    thread.start()
+def run_in_new_process(module):
+    # Run the module in another process.
+    process = multiprocessing.Process(target=module.run_wrapper,
+                                     name=module.thread_name)
+    process.start()
+
+    return process
 
 
 def run_and_reschedule(scheduler, module):
     """
-    Run a Schedulable in a thread, and reschedule it immediately.
+    Run a Schedulable in a process, and reschedule it immediately.
     """
-    run_in_thread(module)
+    process = run_in_new_process(module)
     scheduler.enter(module.scheduling_delay, DEFAULT_PRIORITY,
                     action=run_and_reschedule, argument=(scheduler, module))
+    return process
 
 
 def initial_schedule(scheduler, module):
@@ -60,9 +65,11 @@ def initial_schedule(scheduler, module):
 
     This is used as the first "bootstrap" run on service start.
     """
+    process = None
     if module.run_immediately:
-        run_and_reschedule(module)
+        process = run_and_reschedule(module)
     else:
         scheduler.enter(module.scheduling_delay, DEFAULT_PRIORITY,
                         action=run_and_reschedule,
                         argument=(scheduler, module))
+    return process

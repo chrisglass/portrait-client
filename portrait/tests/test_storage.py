@@ -34,6 +34,8 @@ class StorageTest(unittest.TestCase):
         create tables in it.
         """
         _, filepath = tempfile.mkstemp()
+        self.addCleanup(os.remove, filepath)
+
         initial_connection = sqlite3.connect(filepath)
         with initial_connection as conn:
             conn.execute("CREATE TABLE foo (id int);")
@@ -43,7 +45,6 @@ class StorageTest(unittest.TestCase):
 
         self.assertEqual([], storage.calls)
         self.assertTrue(storage._is_database_initialized())
-        os.remove(filepath)
 
     def test_adding_message_saves_it(self):
         """
