@@ -1,7 +1,7 @@
 ACCOUNT="devel"
 
 check:
-	@nosetests3 landscape
+	@nosetests3 portrait
 
 clean:
 	@find -name "*.pyc" -delete
@@ -9,4 +9,4 @@ clean:
 
 run:
 	@echo Registering against account $(ACCOUNT)
-	@python3 -m landscape $(ACCOUNT) example_config.conf
+	@python3 -m portrait $(ACCOUNT) example_config.conf

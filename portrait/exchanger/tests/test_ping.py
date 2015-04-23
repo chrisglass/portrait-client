@@ -1,7 +1,7 @@
 import unittest
 
-from landscape.exchanger import ping
-from landscape.lib import bpickle
+from portrait.exchanger import ping
+from portrait.lib import bpickle
 
 
 class FauxScheduler(object):

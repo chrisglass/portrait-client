@@ -4,7 +4,7 @@ import json
 #import numpy  #XXX: this is not part of the real dependencies! Install manually
 #import msgpack  #XXX: Not in the deps either!
 
-from landscape.lib import bpickle
+from portrait.lib import bpickle
 
 
 @unittest.skip  #XXX: REMOVE BEFORE FLIGHT

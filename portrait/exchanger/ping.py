@@ -1,6 +1,6 @@
 import requests
 
-from landscape.scheduler import Scheduleable
+from portrait.scheduler import Scheduleable
 
 
 class Pinger(Scheduleable):

@@ -2,8 +2,8 @@ import unittest
 
 from collections import namedtuple
 
-from landscape.lib import bpickle
-from landscape.exchanger.exchange import Exchanger
+from portrait.lib import bpickle
+from portrait.exchanger.exchange import Exchanger
 
 
 class FauxStorage(object):

@@ -1,7 +1,7 @@
 import unittest
 
-from landscape.message_schemas import RESYNCHRONIZE
-from landscape.schema import InvalidError
+from portrait.message_schemas import RESYNCHRONIZE
+from portrait.schema import InvalidError
 
 
 class MessageSchemaTest(unittest.TestCase):

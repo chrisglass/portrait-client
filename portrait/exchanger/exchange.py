@@ -1,20 +1,20 @@
 import requests
 
-from landscape import SERVER_API
-from landscape.lib import bpickle
-from landscape.scheduler import Scheduleable
+from portrait import SERVER_API
+from portrait.lib import bpickle
+from portrait.scheduler import Scheduleable
 
 
 class Exchanger(Scheduleable):
     """
-    A class performing the actual exchanges with the landscape server.
+    A class performing the actual exchanges with the portrait server.
 
     The idea is that it should periodically look in the message store and send
     all unsent messages.
     """
 
     scheduling_delay = 120  # Run every 2 minutes?
-    thread_name = "landscape-client-exchanger"
+    thread_name = "portrait-client-exchanger"
 
     def __init__(self, storage, config, post=requests.post):
         self.storage = storage

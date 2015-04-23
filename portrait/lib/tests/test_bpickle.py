@@ -1,6 +1,6 @@
 import unittest
 
-from landscape.lib import bpickle
+from portrait.lib import bpickle
 
 REAL_ANSWER = (b"ds8:messageslds4:types14:accepted-typess5:typeslu8:register"
                b"u4:test;;ds2:ids9:secure-ids11:insecure-idi999999;s4:types6:"

@@ -5,3 +5,4 @@ lshw
 TESTING:
 python3-nose
 python3-coverage
+make

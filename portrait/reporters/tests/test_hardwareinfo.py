@@ -1,6 +1,6 @@
 import unittest
 
-from landscape.reporters.hardwareinfo import HardwareReporter
+from portrait.reporters.hardwareinfo import HardwareReporter
 
 
 class HardwareReporterTest(unittest.TestCase):

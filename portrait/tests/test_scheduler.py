@@ -3,7 +3,7 @@ import time
 import unittest
 
 
-from landscape.scheduler import Scheduleable, run_and_reschedule
+from portrait.scheduler import Scheduleable, run_and_reschedule
 
 
 class SchedulerTest(unittest.TestCase):

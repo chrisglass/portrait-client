@@ -3,7 +3,7 @@ import tempfile
 import sqlite3
 import os
 
-from landscape.storage import Storage
+from portrait.storage import Storage
 
 
 class StubbedStorage(Storage):

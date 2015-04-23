@@ -1,17 +1,17 @@
-# The main file for landscape client.
+# The main file for portrait client.
 
 import sched
 import sys
 import time
 import itertools
 
-from landscape import config
-from landscape.exchanger.ping import Pinger
-from landscape.exchanger.exchange import Exchanger
-from landscape.exchanger.register import Registration
-from landscape.reporters.hardware import HardwareReporter
-from landscape.scheduler import initial_schedule
-from landscape.storage import Storage
+from portrait import config
+from portrait.exchanger.ping import Pinger
+from portrait.exchanger.exchange import Exchanger
+from portrait.exchanger.register import Registration
+from portrait.reporters.hardware import HardwareReporter
+from portrait.scheduler import initial_schedule
+from portrait.storage import Storage
 
 
 # TODO: This doens't quite work yet, but the intent is to show what the idea

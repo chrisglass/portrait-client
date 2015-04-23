@@ -1,6 +1,6 @@
 import unittest
 
-from landscape.exchanger.register import Registration
+from portrait.exchanger.register import Registration
 
 class RegisterTest(unittest.TestCase):
 

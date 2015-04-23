@@ -1,8 +1,8 @@
 import time
 
-from landscape import SERVER_API
+from portrait import SERVER_API
 
-from landscape.exchanger.exchange import Exchanger
+from portrait.exchanger.exchange import Exchanger
 
 
 class Registration(object):

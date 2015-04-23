@@ -1,6 +1,6 @@
 import subprocess
 
-from landscape.scheduler import Scheduleable
+from portrait.scheduler import Scheduleable
 
 
 class HardwareReporter(Scheduleable):

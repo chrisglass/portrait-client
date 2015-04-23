@@ -3,7 +3,7 @@ import tempfile
 import textwrap
 import unittest
 
-from landscape.config import load_config_file, DEFAULTS
+from portrait.config import load_config_file, DEFAULTS
 
 
 class Maintest(unittest.TestCase):
