@@ -12,5 +12,5 @@ be done. Feel free to add items here, too:
 - The main (landscape/main.py) doesn't quite work yet, but serves as a high-level
   view of how things should (?) work. Feel free to run it, see what's not working,
   and fix it :)
-- Switch to using multiprocessing instead of threads
-- Make the squite access thread-proof (don't share a connection object, AFAICT)
+- DONE Switch to using multiprocessing instead of threads
+- DONE Make the squite access thread-proof (don't share a connection object, AFAICT)
