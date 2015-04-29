@@ -5,7 +5,7 @@ They are only used for validating message correctness before sending them,
 and not to actually build the messages.
 """
 
-from portrait.schema import (
+from portrait.old.schema import (
     Message, KeyDict, Dict, List, Tuple,
     Bool, Int, Float, Bytes, Unicode, Constant, Any)
 

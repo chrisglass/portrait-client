@@ -1,7 +1,7 @@
 #from portrait.tests.helpers import LandscapeTest
 import unittest
 
-from portrait.schema import (
+from portrait.old.schema import (
     InvalidError, Constant, Bool, Int, Float, Bytes, Unicode, List, KeyDict,
     Dict, Tuple, Any, Message)
 
