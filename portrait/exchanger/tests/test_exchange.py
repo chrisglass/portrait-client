@@ -15,6 +15,9 @@ class FauxStorage(object):
     def set(self, key, value):
         self.contents[key] = value
 
+    def get(self, key):
+        return self.contents.get(key)
+
     def pop_all_pending_messages(self):
         return self.messages
 

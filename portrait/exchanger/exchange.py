@@ -12,6 +12,8 @@ class Exchanger(Scheduleable):
 
     The idea is that it should periodically look in the message store and send
     all unsent messages.
+
+    Sending the message requires to know a few things from teh server
     """
 
     scheduling_delay = 120  # Run every 2 minutes?
@@ -59,6 +61,11 @@ class Exchanger(Scheduleable):
                    "User-Agent": "Portrait-client DEVEL",
                    "Content-Type": "application/octet-stream"}
 
+        # If we have a next expected token in the store, send it to the server.
+        exchange_token = self.main_store.get("next-expected-token")
+        if exchange_token is not None:
+            headers.update({"X-Exchange-Token": exchange_token})
+
         # Let's perform the actual POST.
         url = "https://%s/message-system" % self.config["server_name"]
         result = self.post(url, data=bpayload, headers=headers)
@@ -68,6 +75,18 @@ class Exchanger(Scheduleable):
     def _process_result(self, result):
         # The reply is a bpickle again.
         answer = bpickle.loads(result.content)
+
+        #TODO: Set next expected sequence if received
+
+        #Set next expected token if received.
+        next_expected_token = answer.get("next-expected-token")
+        if next_expected_token is not None:
+            self.main_store.set("next-expected-token", next_expected_token)
+
+        #Set server uuid if received.
+        server_uuid = answer.get("server-uuid")
+        if server_uuid is not None:
+            self.main_store.set("server-uuid", server_uuid)
 
         received_messages = {
             message["type"]:message for message in answer["messages"]}
