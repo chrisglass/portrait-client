@@ -8,9 +8,9 @@ from portrait.exchanger.exchange import Exchanger
 
 class FauxStorage(object):
 
-    def __init__(self, messages=None):
-        self.messages = messages
-        self.contents = {}
+    def __init__(self, messages=None, contents=None):
+        self.messages = messages or []
+        self.contents = contents or {}
 
     def set(self, key, value):
         self.contents[key] = value
@@ -22,10 +22,12 @@ class FauxStorage(object):
         return self.messages
 
 
-def faux_storage_factory(messages=None):
+def faux_storage_factory(messages=None, contents=None):
     if messages is None:
         messages = []
-    return lambda x: FauxStorage(messages)
+    if contents is None:
+        contents = {}
+    return lambda x: FauxStorage(messages, contents)
 
 
 class ExchangerTest(unittest.TestCase):
@@ -69,6 +71,38 @@ class ExchangerTest(unittest.TestCase):
         expected = [("https://example.com/message-system", expected_payload)]
 
         self.assertEqual(expected, post_calls)
+
+    def test_exhanger_transmits_next_token_if_present(self):
+        """
+        If a next expected token is found in the database, it is sent to the
+        server via the special X-Exchange-Token header.
+        """
+        post_calls = []
+        process_calls = []
+
+        def stub_post(url, **kwargs):
+            post_calls.append((url, kwargs))
+
+        def stub_process_result(result):
+            process_calls.append(result)
+
+        config = {"server_name": "example.com"}
+        messages = [{"type": "test"}]
+        main_store_contents = {"next-expected-token": "thetoken"}
+        exchanger = Exchanger(
+            config, post=stub_post,
+            main_store_factory=faux_storage_factory(
+                messages, main_store_contents))
+
+        # Monkeypatching
+        exchanger._process_result = stub_process_result
+
+        exchanger.run_wrapper()
+
+        self.assertEqual([None], process_calls)
+
+        self.assertIn(("X-Exchange-Token", "thetoken"),
+                      post_calls[0][1]["headers"].items())
 
     def test_exchanger_bails_out_on_no_message(self):
         """
