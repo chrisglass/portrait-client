@@ -1,7 +1,7 @@
 import subprocess
 
 from portrait.scheduler import Scheduleable
-from portrait.storage import MainStore
+from portrait.storage.main import MainStore
 
 
 class HardwareReporter(Scheduleable):

@@ -1,6 +1,6 @@
 import multiprocessing
 
-from portrait.storage import MainStore
+from portrait.storage.main import MainStore
 
 
 DEFAULT_PRIORITY = 3  # 1 is highest. That leaves room for refinement.

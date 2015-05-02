@@ -7,7 +7,7 @@ import unittest
 
 from portrait.scheduler import Scheduleable, run_and_reschedule
 from portrait.scheduler import run_in_new_process
-from portrait.storage import MainStore
+from portrait.storage.main import MainStore
 
 TEST_MESSAGE = {"type": "test", "something": "whatever"}
 

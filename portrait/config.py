@@ -1,7 +1,7 @@
 import configparser
 import os
 
-from portrait.storage import DEFAULT_PORTRAIT_DB_PATH
+from portrait.storage.main import DEFAULT_PORTRAIT_DB_PATH
 
 
 # The portrait client configuration file. This is expected to be an INI file

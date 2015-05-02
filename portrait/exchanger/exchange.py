@@ -3,7 +3,7 @@ import requests
 from portrait import SERVER_API
 from portrait.lib import bpickle
 from portrait.scheduler import Scheduleable
-from portrait.storage import MainStore
+from portrait.storage.main import MainStore
 
 
 class Exchanger(Scheduleable):

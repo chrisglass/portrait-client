@@ -3,7 +3,7 @@ import time
 from portrait import SERVER_API
 
 from portrait.exchanger.exchange import Exchanger
-from portrait.storage import MainStore
+from portrait.storage.main import MainStore
 
 
 class Registration(object):
