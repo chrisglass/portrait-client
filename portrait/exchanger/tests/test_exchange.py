@@ -53,7 +53,7 @@ class ExchangerTest(unittest.TestCase):
             config, post=stub_post,
             main_store_factory=faux_storage_factory(messages))
 
-        # Monkeypatching
+        # Monkeypatching a stub
         exchanger._process_result = stub_process_result
 
         exchanger.run_wrapper()
@@ -61,15 +61,14 @@ class ExchangerTest(unittest.TestCase):
         self.assertEqual([None], process_calls)
         expected_payload = {
             'data': b'ds14:accepted-typess0:s10:client-apis3:3.3s8:messagesld'
-                    b's4:types4:test;;s22:next-expected-sequencei1;s8:sequenc'
-                    b'es1:0s10:server-apis3:3.3s14:total-messagesi1;;',
+                    b's4:types4:test;;s22:next-expected-sequencei2;s8:sequence'
+                    b'i1;s10:server-apis3:3.3s14:total-messagesi1;;',
             'headers': {
                 'User-Agent': 'Portrait-client DEVEL',
                 'X-Message-API': '3.3',
                 'Content-Type': 'application/octet-stream'}}
 
         expected = [("https://example.com/message-system", expected_payload)]
-
         self.assertEqual(expected, post_calls)
 
     def test_exhanger_transmits_next_token_if_present(self):
@@ -94,7 +93,7 @@ class ExchangerTest(unittest.TestCase):
             main_store_factory=faux_storage_factory(
                 messages, main_store_contents))
 
-        # Monkeypatching
+        # Monkeypatching a stub
         exchanger._process_result = stub_process_result
 
         exchanger.run_wrapper()
