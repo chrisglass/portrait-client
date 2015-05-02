@@ -36,23 +36,24 @@ class Exchanger(Scheduleable):
         Look in the message store and send any message you find!
         """
         messages = self.main_store.pop_all_pending_messages()
+        number_of_messages = len(messages)
 
         # Bail out immediately if there are no messages to send.
-        if len(messages) == 0:
+        if number_of_messages == 0:
             return
 
         # The exchange's payload. It can contain a number of messages (not
         # just one).
 
-        # TODO: Update sequence numbers for the case where the computer is
-        # registered already.
+
         payload = {"server-api": SERVER_API,
                    "client-api": SERVER_API,
-                   "sequence": "0",
                    "accepted-types": "",
                    "messages": messages,
-                   "total-messages": len(messages),
-                   "next-expected-sequence": 1}
+                   "total-messages": number_of_messages,}
+
+        last_sent_sequence = self.main_store.get("last-sent-sequence") or 0
+        payload.update(compute_sequence_numbers(number_of_messages, last_sent_sequence))
 
         # The server expects the wire format to be bpickle.
         bpayload = bpickle.dumps(payload)
@@ -68,6 +69,11 @@ class Exchanger(Scheduleable):
 
         # Let's perform the actual POST.
         url = "https://%s/message-system" % self.config["server_name"]
+
+        # Update the last sent sequence number to this exchange's last sequence
+        self.main_store.set("last-sent-sequence",
+                            last_sent_sequence + number_of_messages)
+
         result = self.post(url, data=bpayload, headers=headers)
 
         self._process_result(result)
@@ -105,3 +111,18 @@ class Exchanger(Scheduleable):
         """Handle the "set-id" messages from the server."""
         self.main_store.set("secure-id", message["id"])
         self.main_store.set("insecure-id", message["insecure-id"])
+
+
+def compute_sequence_numbers(number_of_messages, last_sent_sequence):
+    """
+    Given a number of messages and the last previously sent sequence number,
+    compute a dict of the current exchange's seuence and next expected sequence
+    numbers.
+    """
+    this_exchange_first_sequence = last_sent_sequence + 1
+    next_expected_sequence = last_sent_sequence + number_of_messages +1
+
+    result = {"sequence": this_exchange_first_sequence,
+              "next-expected-sequence": next_expected_sequence}
+
+    return result
