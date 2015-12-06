@@ -3,7 +3,7 @@ import tempfile
 import sqlite3
 import os
 
-from portrait.storage.main import MainStore
+from portrait.storage.main import MainStore, ExchangeStore
 
 
 class StubbedStorage(MainStore):
@@ -17,7 +17,7 @@ class StubbedStorage(MainStore):
         self.calls.append(True)
 
 
-class StorageTest(unittest.TestCase):
+class MainStorageTest(unittest.TestCase):
 
     def setUp(self):
         self.storage = MainStore({"main_store": ":memory:"})
@@ -67,6 +67,12 @@ class StorageTest(unittest.TestCase):
         with self.storage.connection as conn:
             result = conn.execute("Select * from message_store where sent == 0")
             self.assertEqual([], result.fetchall())
+
+
+class ExchangeStorageTest(unittest.TestCase):
+
+    def setUp(self):
+        self.storage = ExchangeStore({"exchange_store": ":memory:"})
 
     def test_key_values_can_be_stored_and_retreived(self):
         """

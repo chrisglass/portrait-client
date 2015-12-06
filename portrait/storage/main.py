@@ -5,19 +5,15 @@ import sqlite3
 DEFAULT_PORTRAIT_DB_PATH = "/var/lib/portrait/main_store.db"
 
 
-class MainStore(object):
-    """
-    A simple key-value store built on top of squite3.
+class SQLiteStorage(object):
 
-    Each process/thread in the client should instanciate its own copy of the
-    Storage object, as this will in turn create it's own thread-local
-    sqlite3.Connection object, and therefore pass all locking/concurrency
-    solving to the underlying database.
-    """
+    schema = ""
+    config_database_path = ""
 
     def __init__(self, config):
-        database_path = config.get("main_store")
-        assert database_path is not None, "No 'main_store' config key found!"
+        database_path = config.get(self.config_database_path)
+        assert database_path is not None
+
         self.database_path = database_path
         # Connect to the squite3 database at the specified path
         self.connection = sqlite3.connect(self.database_path)
@@ -25,6 +21,11 @@ class MainStore(object):
         # If there are no tables in the database, create the schema:
         if not self._is_database_initialized():
             self._create_schema()
+
+    def _create_schema(self):
+        with self.connection as conn:
+            for statement in self.schema:
+                conn.execute(statement)
 
     def _is_database_initialized(self):
         results = []
@@ -34,16 +35,22 @@ class MainStore(object):
             results = cursor.fetchall()
         return len(results) > 0
 
-    def _create_schema(self):
-        with self.connection as conn:
-            conn.execute(
-                "CREATE TABLE message_store "
-                "    (id integer primary key,"
-                "     message varchar,"
-                "     sent bool default (0))")
-            conn.execute(
-                "CREATE TABLE documents "
-                    "(key varchar unique, value varchar)")
+
+class MainStore(SQLiteStorage):
+    """
+    A simple key-value store built on top of squite3.
+
+    Each process/thread in the client should instanciate its own copy of the
+    Storage object, as this will in turn create it's own thread-local
+    sqlite3.Connection object, and therefore pass all locking/concurrency
+    solving to the underlying database.
+    """
+    config_database_path = "main_store"
+
+    schema = ["""CREATE TABLE message_store
+                    (id integer primary key,
+                     message varchar,
+                     sent bool default (0))"""]
 
     def pile_message(self, message):
         """
@@ -68,7 +75,8 @@ class MainStore(object):
         """
         results = []
         with self.connection as conn:
-            cursor = conn.execute("SELECT id, message FROM message_store WHERE sent == 0")
+            cursor = conn.execute("SELECT id, message FROM message_store"
+                                  " WHERE sent == 0")
             results = cursor.fetchall()
             ids = [str(row[0]) for row in results]
             id_list = ", ".join(ids)
@@ -76,6 +84,14 @@ class MainStore(object):
                          (id_list,))
         results = [json.loads(row[1]) for row in results]
         return results
+
+
+class ExchangeStore(SQLiteStorage):
+
+    config_database_path = "exchange_store"
+
+    schema = ["""CREATE TABLE documents
+                    (key varchar unique, value varchar)"""]
 
     def set(self, key, value):
         """
