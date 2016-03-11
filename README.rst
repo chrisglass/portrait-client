@@ -13,8 +13,7 @@ General idea
 ------------
 
 Having a scheduler (sched) coordinate several events:
-- A message sender that looks into a message store (sqlite) if messages are to
-  be sent, and sends them all (the exchanger in portrait/exchanger/exchange.py)
+- A message sender that looks into a message store (sqlite) if messages are to be sent, and sends them all (the exchanger in portrait/exchanger/exchange.py)
 - A set of reporters that "report" status by inserting messages in the message store.
 - Once the exchanger gets the list of server->client messages after an exchange, it delegates handling of individual messages to...
 - ...A set of handlers that action on the running system
