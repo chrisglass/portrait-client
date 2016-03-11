@@ -1,13 +1,13 @@
 What is Portrait-client?
 ========================
 
-portrait-client is a vailliant attempt at writing a landscape-client from scratch
+portrait-client is a valiant attempt at writing a landscape-client from scratch
 using modern python tools, mostly in order to have a python3 compatible one.
 
 That means, specifically:
 
 - Not using twisted (python3!)
-- Using standard library features as much as possible (sched, squite3)
+- Using standard library features as much as possible (sched, sqlite3)
 
 General idea
 ------------
