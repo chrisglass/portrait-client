@@ -12,14 +12,12 @@ class Exchanger(Scheduleable):
 
     The idea is that it should periodically look in the message store and send
     all unsent messages.
-
-    Sending the message requires to know a few things from teh server
     """
 
     scheduling_delay = 120  # Run every 2 minutes?
     thread_name = "portrait-client-exchanger"
 
-    def __init__(self, config, post=requests.post, main_store=None,
+    def __init__(self, config, handlers, post=requests.post, main_store=None,
                  main_store_factory=MainStore):
         super(Exchanger, self).__init__(config, main_store_factory)
 
@@ -30,6 +28,8 @@ class Exchanger(Scheduleable):
 
         self.post = post
         self.config = config
+        # A map of message type to handler class for this message type.
+        self.handlers_map = self._create_handlers_map(hanlders)
 
     def run(self):
         """
@@ -44,8 +44,6 @@ class Exchanger(Scheduleable):
 
         # The exchange's payload. It can contain a number of messages (not
         # just one).
-
-
         payload = {"server-api": SERVER_API,
                    "client-api": SERVER_API,
                    "accepted-types": "",
@@ -53,7 +51,8 @@ class Exchanger(Scheduleable):
                    "total-messages": number_of_messages,}
 
         last_sent_sequence = self.main_store.get("last-sent-sequence") or 0
-        payload.update(compute_sequence_numbers(number_of_messages, last_sent_sequence))
+        payload.update(compute_sequence_numbers(
+            number_of_messages, last_sent_sequence))
 
         # The server expects the wire format to be bpickle.
         bpayload = bpickle.dumps(payload)
@@ -98,19 +97,16 @@ class Exchanger(Scheduleable):
             message["type"]:message for message in answer["messages"]}
 
         for msgtype, message in received_messages.items():
-            handler_name = "_handle_%s" % msgtype.lower().replace("-", "_")
-            handler = getattr(self, handler_name)
+            # Find the proper handler to use in the handler map.
+            handlder = self.handlers_map[msgtype](self.config, self.main_store)
+            hanlder.handle(message)
 
-            error_message = "Couldn't find a handler for '%s'." % msgtype
-            assert handler is not None, error_message
-
-            # Call the message handler
-            handler(message)
-
-    def _handle_set_id(self, message):
-        """Handle the "set-id" messages from the server."""
-        self.main_store.set("secure-id", message["id"])
-        self.main_store.set("insecure-id", message["insecure-id"])
+    def _create_handler_map(self, hanlders):
+        """
+        Create a map of messgae type to handler class for that particular
+        message type.
+        """
+        return {handler.message_type: handler for handler in handlers}
 
 
 def compute_sequence_numbers(number_of_messages, last_sent_sequence):
