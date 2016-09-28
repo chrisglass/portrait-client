@@ -17,7 +17,7 @@ class Exchanger(Scheduleable):
     scheduling_delay = 120  # Run every 2 minutes?
     thread_name = "portrait-client-exchanger"
 
-    def __init__(self, config, handlers, post=requests.post, main_store=None,
+    def __init__(self, config, handlers=None, post=requests.post, main_store=None,
                  main_store_factory=MainStore):
         super(Exchanger, self).__init__(config, main_store_factory)
 
@@ -26,10 +26,13 @@ class Exchanger(Scheduleable):
         if main_store is not None:
             self.main_store = main_store
 
+        if handlers is None:
+            handlers = []
+
         self.post = post
         self.config = config
         # A map of message type to handler class for this message type.
-        self.handlers_map = self._create_handlers_map(hanlders)
+        self.handlers_map = self._create_handlers_map(handlers)
 
     def run(self):
         """
@@ -98,10 +101,10 @@ class Exchanger(Scheduleable):
 
         for msgtype, message in received_messages.items():
             # Find the proper handler to use in the handler map.
-            handlder = self.handlers_map[msgtype](self.config, self.main_store)
-            hanlder.handle(message)
+            handler = self.handlers_map[msgtype](self.config, self.main_store)
+            handler.handle(message)
 
-    def _create_handler_map(self, hanlders):
+    def _create_handlers_map(self, handlers):
         """
         Create a map of messgae type to handler class for that particular
         message type.
